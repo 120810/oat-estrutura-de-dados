@@ -1,0 +1,98 @@
+import java.util.*;
+
+public class Main {
+
+    // Representa o grafo com a lista de adjacência
+    private Map<String, List<String>> adjList;
+
+    public Main() {
+        adjList = new HashMap<>();
+    }
+
+    // Adiciona uma aresta (ponte) entre duas cidades (vértices)
+    public void addEdge(String src, String dest) {
+        adjList.putIfAbsent(src, new ArrayList<>());
+        adjList.putIfAbsent(dest, new ArrayList<>());
+        adjList.get(src).add(dest);
+        adjList.get(dest).add(src);
+    }
+
+    // Verifica se o grafo tem um passeio Euleriano
+    public boolean hasEulerianPath() {
+        int oddCount = 0;
+        for (String vertex : adjList.keySet()) {
+            if (adjList.get(vertex).size() % 2 != 0) {
+                oddCount++;
+            }
+        }
+        return oddCount == 0 || oddCount == 2;
+    }
+
+    // Método para imprimir a matriz de adjacência
+    public void printAdjacencyMatrix() {
+        List<String> vertices = new ArrayList<>(adjList.keySet());
+        int n = vertices.size();
+        int[][] matrix = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (adjList.get(vertices.get(i)).contains(vertices.get(j))) {
+                    matrix[i][j] = 1; // Passo direto entre as cidades
+                } else {
+                    matrix[i][j] = 0; // Sem conexão direta
+                }
+            }
+        }
+
+        System.out.println("Matriz de Adjacência:");
+        System.out.print("  ");
+        for (String vertex : vertices) {
+            System.out.print(vertex + " ");
+        }
+        System.out.println();
+        for (int i = 0; i < n; i++) {
+            System.out.print(vertices.get(i) + " ");
+            for (int j = 0; j < n; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    // Método para calcular o total de passos realizados
+    public int calculateTotalSteps() {
+        int totalSteps = 0;
+        for (List<String> neighbors : adjList.values()) {
+            totalSteps += neighbors.size();
+        }
+        return totalSteps / 2; // Cada ponte é contada duas vezes
+    }
+
+    public static void main(String[] args) {
+        Main graph = new Main();
+
+        // Adiciona as pontes entre as cidades (vértices)
+        graph.addEdge("B", "T");
+        graph.addEdge("B", "S");
+        graph.addEdge("T", "C");
+        graph.addEdge("T", "G");
+        graph.addEdge("C", "S");
+        graph.addEdge("G", "P");
+        graph.addEdge("S", "A");
+        graph.addEdge("P", "A");
+
+        // Verifica se o grafo tem um passeio Euleriano
+        if (graph.hasEulerianPath()) {
+            System.out.println("É possível realizar um passeio Euleriano.");
+        } else {
+            System.out.println("Não é possível realizar um passeio Euleriano.");
+        }
+
+        // Imprime a matriz de adjacência
+        graph.printAdjacencyMatrix();
+
+        // Calcula e imprime o total de passos realizados
+        int totalSteps = graph.calculateTotalSteps();
+        System.out.println("Total de passos realizados: " + totalSteps);
+    }
+}
